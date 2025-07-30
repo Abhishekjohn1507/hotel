@@ -173,7 +173,7 @@ export class MemStorage implements IStorage {
 
   async createRoom(insertRoom: InsertRoom): Promise<Room> {
     const id = randomUUID();
-    const room: Room = { ...insertRoom, id };
+    const room: Room = { ...insertRoom, id, available: insertRoom.available ?? true };
     this.rooms.set(id, room);
     return room;
   }
@@ -189,7 +189,7 @@ export class MemStorage implements IStorage {
 
   async createFoodItem(insertFoodItem: InsertFoodItem): Promise<FoodItem> {
     const id = randomUUID();
-    const foodItem: FoodItem = { ...insertFoodItem, id };
+    const foodItem: FoodItem = { ...insertFoodItem, id, available: insertFoodItem.available ?? true };
     this.foodItems.set(id, foodItem);
     return foodItem;
   }
@@ -208,6 +208,7 @@ export class MemStorage implements IStorage {
     const booking: RoomBooking = { 
       ...insertBooking, 
       id, 
+      status: insertBooking.status ?? "confirmed",
       createdAt: new Date()
     };
     this.roomBookings.set(id, booking);
@@ -237,6 +238,7 @@ export class MemStorage implements IStorage {
     const order: FoodOrder = { 
       ...insertOrder, 
       id, 
+      status: insertOrder.status ?? "preparing",
       createdAt: new Date()
     };
     this.foodOrders.set(id, order);

@@ -1,5 +1,7 @@
-import { type Room, type FoodItem, type RoomBooking, type FoodOrder, type InsertRoom, type InsertFoodItem, type InsertRoomBooking, type InsertFoodOrder } from "@shared/schema";
+import { type Room, type FoodItem, type RoomBooking, type FoodOrder, type InsertRoom, type InsertFoodItem, type InsertRoomBooking, type InsertFoodOrder, rooms, foodItems, roomBookings, foodOrders } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Rooms
@@ -255,4 +257,97 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // Room methods
+  async getRooms(): Promise<Room[]> {
+    return await db.select().from(rooms);
+  }
+
+  async getRoom(id: string): Promise<Room | undefined> {
+    const [room] = await db.select().from(rooms).where(eq(rooms.id, id));
+    return room || undefined;
+  }
+
+  async createRoom(insertRoom: InsertRoom): Promise<Room> {
+    const [room] = await db
+      .insert(rooms)
+      .values(insertRoom)
+      .returning();
+    return room;
+  }
+
+  // Food Item methods
+  async getFoodItems(): Promise<FoodItem[]> {
+    return await db.select().from(foodItems);
+  }
+
+  async getFoodItem(id: string): Promise<FoodItem | undefined> {
+    const [foodItem] = await db.select().from(foodItems).where(eq(foodItems.id, id));
+    return foodItem || undefined;
+  }
+
+  async createFoodItem(insertFoodItem: InsertFoodItem): Promise<FoodItem> {
+    const [foodItem] = await db
+      .insert(foodItems)
+      .values(insertFoodItem)
+      .returning();
+    return foodItem;
+  }
+
+  // Room Booking methods
+  async getRoomBookings(): Promise<RoomBooking[]> {
+    return await db.select().from(roomBookings);
+  }
+
+  async getRoomBooking(id: string): Promise<RoomBooking | undefined> {
+    const [booking] = await db.select().from(roomBookings).where(eq(roomBookings.id, id));
+    return booking || undefined;
+  }
+
+  async createRoomBooking(insertBooking: InsertRoomBooking): Promise<RoomBooking> {
+    const [booking] = await db
+      .insert(roomBookings)
+      .values(insertBooking)
+      .returning();
+    return booking;
+  }
+
+  async updateRoomBookingStatus(id: string, status: string): Promise<RoomBooking | undefined> {
+    const [booking] = await db
+      .update(roomBookings)
+      .set({ status })
+      .where(eq(roomBookings.id, id))
+      .returning();
+    return booking || undefined;
+  }
+
+  // Food Order methods
+  async getFoodOrders(): Promise<FoodOrder[]> {
+    return await db.select().from(foodOrders);
+  }
+
+  async getFoodOrder(id: string): Promise<FoodOrder | undefined> {
+    const [order] = await db.select().from(foodOrders).where(eq(foodOrders.id, id));
+    return order || undefined;
+  }
+
+  async createFoodOrder(insertOrder: InsertFoodOrder): Promise<FoodOrder> {
+    const [order] = await db
+      .insert(foodOrders)
+      .values(insertOrder)
+      .returning();
+    return order;
+  }
+
+  async updateFoodOrderStatus(id: string, status: string): Promise<FoodOrder | undefined> {
+    const [order] = await db
+      .update(foodOrders)
+      .set({ status })
+      .where(eq(foodOrders.id, id))
+      .returning();
+    return order || undefined;
+  }
+}
+
+// Use DatabaseStorage for production
+export const storage = new DatabaseStorage();

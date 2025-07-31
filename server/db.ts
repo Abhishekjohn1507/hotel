@@ -8,17 +8,16 @@ import * as schema from '@shared/schema';
 // Configure Neon to use WebSocket (required for serverless)
 neonConfig.webSocketConstructor = ws;
 
-// Ensure DATABASE_URL is defined
-if (!process.env.DATABASE_URL) {
+const databaseUrl = process.env.NEON_DATABASE_URL || process.env.DATABASE_URL;
+
+if (!databaseUrl) {
   throw new Error(
-    'DATABASE_URL must be set. Did you forget to provision a database?',
+    "DATABASE_URL must be set. Did you forget to provision a database?",
   );
 }
 
 // Create DB connection pool
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+export const pool = new Pool({ connectionString: databaseUrl });
 
 // Initialize Drizzle with the pool and schema
 export const db = drizzle(pool, { schema });

@@ -26,15 +26,31 @@ export default function BookingsSection() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    // Create a Date object from the string
+    const dateObj = new Date(dateString);
+    
+    // Check if dateObj is a valid Date
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid date';
+    }
+    
+    return dateObj.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
+  const formatTime = (date: Date | string) => {
+    // Ensure we have a Date object
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    // Check if dateObj is a valid Date
+    if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+      return 'Invalid date';
+    }
+    
+    return dateObj.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true

@@ -21,7 +21,7 @@ Preferred communication style: Simple, everyday language.
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM (Production-ready)
-- **Database Provider**: Replit PostgreSQL (provisioned and configured)
+- **Database Provider**: Neon PostgreSQL (serverless, production-ready)
 - **Storage Layer**: DatabaseStorage class with full CRUD operations
 - **API Design**: RESTful API endpoints with proper error handling
 
@@ -42,8 +42,8 @@ The application uses four main entities:
 
 ### Storage Implementation
 - **Interface-based Design**: IStorage interface allows for different storage backends
-- **Production Database**: DatabaseStorage class with PostgreSQL integration
-- **Sample Data**: Database pre-populated with rooms and food items for testing
+- **Production Database**: DatabaseStorage class with Neon PostgreSQL integration
+- **Sample Data**: Neon database pre-populated with rooms and food items for testing
 
 ## Data Flow
 

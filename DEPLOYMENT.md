@@ -51,28 +51,56 @@ vercel --prod
 ```json
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "builds": [
     {
-      "src": "server/index.ts",
+      "src": "package.json",
       "use": "@vercel/node"
     },
     {
-      "src": "client/**/*",
+      "src": "dist/public/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server/index.ts"
+      "dest": "/dist/index.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/client/$1"
+      "dest": "/dist/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/public/index.html"
     }
   ]
 }
 ```
+
+**Note:** This configuration ensures that:
+1. The build process runs `npm run build` which builds both the client and server
+2. API requests are routed to the compiled server code
+3. Static assets are served from the correct location
+4. Client-side routing works properly with a fallback to index.html
+
+#### Troubleshooting Vercel Deployments
+
+**Common Issue: 404 NOT_FOUND Errors**
+
+If you encounter 404 errors after deployment, it's likely due to a mismatch between the build output directory and the routes configuration in `vercel.json`. The configuration above addresses this by:
+
+1. Using `package.json` as the entry point instead of directly referencing the server file
+2. Setting explicit `buildCommand` and `outputDirectory` properties
+3. Correctly routing API requests to the compiled server code in `/dist/index.js`
+4. Adding a route for static assets with the pattern `/(.*) -> /dist/public/$1`
+5. Including a fallback route for client-side routing
+
+**Vercel Build Output Warning**
+
+You may see a warning about "unused build settings" in your Vercel deployment logs. This is expected and can be safely ignored, as we're using a custom build configuration.
 
 ### Option 3: Railway Deployment
 

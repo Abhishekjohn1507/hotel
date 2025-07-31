@@ -242,7 +242,7 @@ export class MemStorage implements IStorage {
       id, 
       status: insertOrder.status ?? "preparing",
       createdAt: new Date(),
-      roomNumber: insertOrder.roomNumber ?? null
+      roomNumber: insertOrder.roomNumber === undefined ? null : insertOrder.roomNumber
     };
     this.foodOrders.set(id, order);
     return order;
@@ -333,9 +333,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createFoodOrder(insertOrder: InsertFoodOrder): Promise<FoodOrder> {
+    const orderData = {
+      ...insertOrder,
+      roomNumber: insertOrder.roomNumber === undefined ? null : insertOrder.roomNumber
+    };
     const [order] = await db
       .insert(foodOrders)
-      .values(insertOrder)
+      .values(orderData)
       .returning();
     return order;
   }

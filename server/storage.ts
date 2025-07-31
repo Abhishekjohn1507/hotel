@@ -241,7 +241,8 @@ export class MemStorage implements IStorage {
       ...insertOrder, 
       id, 
       status: insertOrder.status ?? "preparing",
-      createdAt: new Date()
+      createdAt: new Date(),
+      roomNumber: insertOrder.roomNumber ?? null
     };
     this.foodOrders.set(id, order);
     return order;

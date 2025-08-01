@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Room } from "@shared/schema";
+import { format } from "date-fns";
 
 const bookingFormSchema = z.object({
   guestName: z.string().min(2, "Name must be at least 2 characters"),
